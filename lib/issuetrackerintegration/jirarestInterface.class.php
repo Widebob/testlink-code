@@ -138,6 +138,7 @@ class jirarestInterface extends issueTrackerInterface
   	  // to cast properties BEFORE using it.
       $this->jiraCfg = array('username' => (string)trim($this->cfg->username),
                    'password' => (string)trim($this->cfg->password),
+                   'jiraToken' => (string)trim($this->cfg->jiraToken),
                    'host' => (string)trim($this->cfg->uriapi));
   	  
       $this->jiraCfg['proxy'] = config_get('proxy');
@@ -642,6 +643,8 @@ class jirarestInterface extends issueTrackerInterface
            "<issuetracker>\n" .
            "<username>JIRA LOGIN NAME</username>\n" .
            "<password>JIRA PASSWORD</password>\n" .
+           "<!-- You can also use account Token for Jira >= v8.14.0 -->\n".
+           "<jiraToken>JIRA TOKEN</jiraToken>\n" .
            "<uribase>https://testlink.atlassian.net/</uribase>\n" .
            "<!-- CRITIC - WITH HTTP getIssue() DOES NOT WORK -->\n" .
            "<uriapi>https://testlink.atlassian.net/rest/api/latest/</uriapi>\n" .

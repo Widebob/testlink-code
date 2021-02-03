@@ -4,7 +4,7 @@ namespace JiraApi;
 
 class RestRequest
 {
-
+    public $bearerToken;
     public $username;
     public $password;
     public $proxy;
@@ -16,6 +16,7 @@ class RestRequest
     protected $acceptType;
     protected $responseBody;
     protected $responseInfo;
+    protected $authBearer;
 
 
     public function openConnect($url = null, $verb = 'GET', $requestBody = null, $filename = null)
@@ -29,6 +30,7 @@ class RestRequest
         $this->responseInfo      = null;
         $this->filename          = $filename;
         $this->contentType       = 'Content-Type: application/json';
+        $this->authBearer        = '';
 
         if ($this->requestBody !== null || $this->filename !== null)
         {    
@@ -173,7 +175,8 @@ class RestRequest
             CURLOPT_HTTPHEADER,
             array(
                 'Accept: ' . $this->acceptType,
-                $this->contentType, 'X-Atlassian-Token: no-check'
+                $this->contentType, 'X-Atlassian-Token: no-check',
+                $this->authBearer
             )
         );
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // ignore self signed certs
@@ -203,6 +206,9 @@ class RestRequest
 
     protected function setAuth(&$ch)
     {
+        if ($this->bearerToken !== null){
+            $this->authBearer = 'Authorization: Bearer ' . $this->bearerToken;
+        }
         if ($this->username !== null && $this->password !== null) {
             curl_setopt($ch, CURLOPT_USERPWD, $this->username . ':' . $this->password);
         }

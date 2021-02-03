@@ -19,6 +19,7 @@ class Jira
     protected $host;
     protected $username;
     protected $password;
+    protected $jiraToken;
     protected $proxy;
 
     /**
@@ -33,7 +34,7 @@ class Jira
     {
         if( !is_null($cfg) )
         {
-            $k2trim = array('username','password','host');
+            $k2trim = array('username','password','host','jiraToken');
             foreach( $k2trim as $tg )
             {
               $this->$tg = (isset($cfg[$tg])) ? trim($cfg[$tg]) : null;
@@ -44,6 +45,7 @@ class Jira
         $this->request = new RestRequest();
         $this->request->username = $this->username; 
         $this->request->password = $this->password;
+        $this->request->bearerToken = $this->jiraToken;
         $this->request->proxy = $this->proxy;
 
         $this->configCheck();
@@ -65,14 +67,22 @@ class Jira
         {
             throw new \Exception('Missing or Empty host (url to API) - unable to continue');      
         }    
-        if(is_null($this->request->username) || $this->request->username == '' )
+        if((is_null($this->request->bearerToken) || $this->request->bearerToken == '') 
+            && (is_null($this->request->username) || $this->request->username == '')
+            && (is_null($this->request->password) || $this->request->password == ''))
+        {
+            throw new \Exception('Missing Bearer Token or username/password - unable to continue');      
+        }   
+        if((is_null($this->request->username) || $this->request->username == '')
+            && (is_null($this->request->bearerToken) || $this->request->bearerToken == ''))
         {
             throw new \Exception('Missing or Empty username - unable to continue');      
         }    
-        if(is_null($this->request->password) || $this->request->password == '')
+        if((is_null($this->request->password) || $this->request->password == '') 
+            && (is_null($this->request->bearerToken) || $this->request->bearerToken == ''))
         {
             throw new \Exception('Missing or Empty password - unable to continue');      
-        }    
+        }   
     }
 
     /**
